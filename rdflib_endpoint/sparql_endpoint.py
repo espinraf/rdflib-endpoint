@@ -301,6 +301,25 @@ SELECT ?concat ?concatLength WHERE {
                         query = params[1]
             return await sparql_endpoint(request, query)
 
+        @self.post(
+            "/addTurtle",
+            name="Add Turtle endpoint",
+            description="RDF TURTLE"
+        )
+        async def post_turtle_endpoint(
+                request: Request
+        ):
+            """Receives a TTL and adds it to the graph.
+            \f
+            :param request: The HTTP POST request with a .body()
+            """
+
+            # Adds the new graph
+            query_body = await request.body()
+            body = parse.unquote(query_body.decode("utf-8"))
+            self.graph.parse(data=body, format="turtle")
+            return "Graph Added"
+
         @self.get("/", include_in_schema=False)
         async def serve_yasgui():
             """Serve YASGUI interface"""
